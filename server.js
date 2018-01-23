@@ -38,6 +38,7 @@ app.use(cors());
 
 // ROUTES 
 $.get(`${conString}/v1/books`, (req, res) => {
+    console.log('${conString}/v1/books');
     client.query(`
       SELECT * FROM books
       INNER JOIN authors
@@ -48,9 +49,10 @@ $.get(`${conString}/v1/books`, (req, res) => {
   });
   
 $.post(`${conString}/v1/books`, (req, res) => {
-client.query(
-    'INSERT INTO authors(author, authorURL) VALUES($1, $2) ON CONFLICT DO NOTHING',
-    [req.body.author, req.body.authorURL],
+    console.log('post route');
+    client.query(
+    'INSERT INTO authors(author, author_url) VALUES($1, $2) ON CONFLICT DO NOTHING',
+    [req.body.author, req.body.author_url],
     function(err) {
     if (err) console.error(err)
     queryTwo()
@@ -58,6 +60,7 @@ client.query(
 )
 
     function queryTwo() {
+        console.log('queryTWo');
         client.query(
           `SELECT author_id FROM authors WHERE author=$1`,
           [req.body.author],
@@ -69,16 +72,17 @@ client.query(
       }
     
       function queryThree(author_id) {
+        console.log('querythree');
         client.query(
           `INSERT INTO
-          books(author_id, title, description, isbn, imageURL)
+          books(author_id, title, description, isbn, image_url)
           VALUES ($1, $2, $3, $4, $5);`,
           [
             author_id,
             req.body.title,
             req.body.description,
             req.body.isbn,
-            req.body.imageURL
+            req.body.image_url
           ],
           function(err) {
             if (err) console.error(err);
@@ -103,12 +107,12 @@ function loadBooks() {
                     JSON.parse(fd.toString()).forEach(ele => {
                         client.query(`
             INSERT INTO
-            books(author_id, title, description, isbn, imageURL)
+            books(author_id, title, description, isbn, image_url)
             SELECT author_id, $1, $2, $3, $4
             FROM authors
             WHERE author=$5;
           `,
-                            [ele.title, ele.description, ele.isbn, ele.imageURL, ele.author]
+                            [ele.title, ele.description, ele.isbn, ele.image_url, ele.author]
                         )
                             .catch(console.error);
                     })
@@ -124,7 +128,7 @@ function loadDB() {
     authors (
       author_id SERIAL PRIMARY KEY,
       author VARCHAR(255) UNIQUE NOT NULL,
-      authorURL VARCHAR(255)
+      author_url VARCHAR(255)
     );`
     )
         .then(loadAuthors)
@@ -138,7 +142,7 @@ function loadDB() {
       title VARCHAR(255) NOT NULL,
       description TEXT,
       isbn VARCHAR(255),
-      imageURL VARCHAR(255)
+      image_url VARCHAR(255)
     );`
     )
         .then(loadBooks)
