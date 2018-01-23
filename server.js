@@ -36,6 +36,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // CROSS ORIGIN SCRIPTING
 app.use(cors());
 
+
+$.get('/', (req, res) => {
+    res.send('hello');
+})
 // ROUTES 
 $.get('/v1/books', (req, res) => {
     console.log('${conString}/v1/books');
