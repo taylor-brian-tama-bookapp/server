@@ -17,9 +17,11 @@ const cors = require('cors');
 const PORT = process.env.PORT;
 // DATABASE PORT
 const conString = process.env.DATABASE_URL;
+// FRONTEND URL
+const clientString = process.env.CLIENT_URL;
 // ALLOWS USERS TO READ AND WRITE TO DB
 const client = new pg.Client(conString);
-const clientURL = 'https://taylor-brian-tama-bookapp.github.io';
+
 
 // HOW WE CONNECT TO OUR DB
 client.connect();
@@ -31,10 +33,63 @@ app.use(compression())
 app.use(bodyParser.json());
 // ALLOWS BODYPARSER TO PARSE NESTED OBJECTS
 app.use(bodyParser.urlencoded({ extended: true }));
-
+// CROSS ORIGIN SCRIPTING
 app.use(cors());
 
-// ***  ROUTES  ***
+// ROUTES 
+$.get(`${conString}/v1/books`, (req, res) => {
+    client.query(`
+      SELECT * FROM books
+      INNER JOIN authors
+        ON books.author_id=authors.author_id;`
+    )
+    .then(result => res.send(result.rows))
+    .catch(console.error);
+  });
+  
+$.post(`${conString}/v1/books`, (req, res) => {
+client.query(
+    'INSERT INTO authors(author, authorURL) VALUES($1, $2) ON CONFLICT DO NOTHING',
+    [req.body.author, req.body.authorURL],
+    function(err) {
+    if (err) console.error(err)
+    queryTwo()
+    }
+)
+
+    function queryTwo() {
+        client.query(
+          `SELECT author_id FROM authors WHERE author=$1`,
+          [req.body.author],
+          function(err, result) {
+            if (err) console.error(err)
+            queryThree(result.rows[0].author_id)
+          }
+        )
+      }
+    
+      function queryThree(author_id) {
+        client.query(
+          `INSERT INTO
+          books(author_id, title, description, isbn, imageURL)
+          VALUES ($1, $2, $3, $4, $5);`,
+          [
+            author_id,
+            req.body.title,
+            req.body.description,
+            req.body.isbn,
+            req.body.imageURL
+          ],
+          function(err) {
+            if (err) console.error(err);
+            res.send('insert complete');
+          }
+        );
+      }
+    });
+
+loadDB();
+
 app.listen(PORT, () => {
     console.log(`SERVER started on port ${PORT}`)
 });
@@ -44,7 +99,7 @@ function loadBooks() {
     client.query('SELECT COUNT(*) FROM books')
         .then(result => {
             if (!parseInt(result.rows[0].count)) {
-                fs.readFile(`${clientURL}./client/data/books.json`, (err, fd) => {
+                fs.readFile(`${clientString}/client/data/books.json`, (err, fd) => {
                     JSON.parse(fd.toString()).forEach(ele => {
                         client.query(`
             INSERT INTO
@@ -69,7 +124,7 @@ function loadDB() {
     authors (
       author_id SERIAL PRIMARY KEY,
       author VARCHAR(255) UNIQUE NOT NULL,
-      "authorUrl" VARCHAR(255)
+      authorURL VARCHAR(255)
     );`
     )
         .then(loadAuthors)
@@ -83,8 +138,7 @@ function loadDB() {
       title VARCHAR(255) NOT NULL,
       description TEXT,
       isbn VARCHAR(255),
-      imageURL
-      body TEXT NOT NULL
+      imageURL VARCHAR(255)
     );`
     )
         .then(loadBooks)
