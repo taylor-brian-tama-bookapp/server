@@ -51,7 +51,7 @@ $.get(`${conString}/v1/books`, (req, res) => {
 $.post(`${conString}/v1/books`, (req, res) => {
     console.log('post route');
     client.query(
-    'INSERT INTO authors(author, author_url) VALUES($1, $2) ON CONFLICT DO NOTHING',
+    'INSERT INTO authors(author, author_url) VALUES($1, $2) ON CONFLICT DO NOTHING;',
     [req.body.author, req.body.author_url],
     function(err) {
     if (err) console.error(err)
@@ -62,7 +62,7 @@ $.post(`${conString}/v1/books`, (req, res) => {
     function queryTwo() {
         console.log('queryTWo');
         client.query(
-          `SELECT author_id FROM authors WHERE author=$1`,
+          `SELECT author_id FROM authors WHERE author=$1;`,
           [req.body.author],
           function(err, result) {
             if (err) console.error(err)
@@ -100,7 +100,7 @@ app.listen(PORT, () => {
 
 function loadBooks() {
     console.log('loadBooks');
-    client.query('SELECT COUNT(*) FROM books')
+    client.query('SELECT COUNT(*) FROM books;')
         .then(result => {
             if (!parseInt(result.rows[0].count)) {
                 fs.readFile(`${clientString}/client/data/books.json`, (err, fd) => {
