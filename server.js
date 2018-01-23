@@ -88,7 +88,7 @@ function loadBooks() {
     fs.readFile(`${CLIENT_URL}/data/books.json`, function(err, fd) {
       JSON.parse(fd.toString()).forEach(function(ele) {
         client.query(
-          'INSERT INTO books(title, author, isbn, image_url, description) VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING',
+          'INSERT INTO books(title, author, isbn, image_url, description) VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING;',
           [ele.title, ele.author, ele.isbn, ele.image_url, ele.description]
         )
       })
