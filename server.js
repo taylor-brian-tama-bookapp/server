@@ -37,7 +37,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 // ROUTES 
-$.get(`${conString}/v1/books`, (req, res) => {
+$.get('/v1/books', (req, res) => {
     console.log('${conString}/v1/books');
     client.query(`
       SELECT * FROM books
@@ -48,7 +48,7 @@ $.get(`${conString}/v1/books`, (req, res) => {
     .catch(console.error);
   });
   
-$.post(`${conString}/v1/books`, (req, res) => {
+$.post('/v1/books', (req, res) => {
     console.log('post route');
     client.query(
     'INSERT INTO authors(author, author_url) VALUES($1, $2) ON CONFLICT DO NOTHING;',
