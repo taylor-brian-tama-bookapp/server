@@ -12,6 +12,8 @@ const pg = require('pg');
 // ALLOWS FOR PARSEING OF INCOMPING API POSTS AND PUTS, MANIPULATES REQ BODY BEFORE IT HITS SERVER
 const bodyParser = require('body-parser');
 // THE PORT WE RUN OUR SERVER ON
+const cors = require('cors');
+//ALLOWS EVERYONE TO VIEW
 const PORT = process.env.PORT;
 // DATABASE PORT
 const conString = process.env.DATABASE_URL;
@@ -28,12 +30,10 @@ app.use(compression())
 app.use(bodyParser.json());
 // ALLOWS BODYPARSER TO PARSE NESTED OBJECTS
 app.use(bodyParser.urlencoded({ extended: true }));
-// ALLOWS EXPRESS TO SERVE STATIC FILES WITHIN PUBLIC DIRECTORY
-app.use(express.static('./public'));
+
+app.use(cors());
 
 // ***  ROUTES  ***
-
-
 app.listen(PORT, () => {
     console.log(`SERVER started on port ${PORT}`)
 });
