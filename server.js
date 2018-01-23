@@ -14,10 +14,10 @@ const bodyParser = require('body-parser');
 // THE PORT WE RUN OUR SERVER ON
 const cors = require('cors');
 //ALLOWS EVERYONE TO VIEW
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 // DATABASE PORT
-//const conString = process.env.DATABASE_URL;
-const conString = 'postgres://localhost:5432/books_app';
+const conString = process.env.DATABASE_URL;
+//const conString = 'postgres://localhost:5432/books_app';
 // FRONTEND URL
 //const CLIENT_URL = process.env.CLIENT_URL;
 const CLIENT_URL = 'https://taylor-brian-tama-bookapp.github.io/client';
@@ -85,7 +85,7 @@ app.listen(PORT, () => {
 });
 
 function loadBooks() {
-    fs.readFile('../client/data/books.json', function(err, fd) {
+    fs.readFile(`${CLIENT_URL}/data/books.json`, function(err, fd) {
       JSON.parse(fd.toString()).forEach(function(ele) {
         client.query(
           'INSERT INTO books(title, author, isbn, image_url, description) VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING',
@@ -104,4 +104,3 @@ function loadBooks() {
       .then(loadBooks());
    }
 
-   
