@@ -11,9 +11,9 @@ const bodyParser = require('body-parser');
 const app = express();
 const PORT = process.env.PORT || 3000;
 //ALLOWS NODE TO INTERACT WITH LOCAL FILES CUS DB IS RUNNING LOCALLY
-const fs = require('fs');
 
-const conString = process.env.DATABASE_URL;
+const conString = 'postgres://localhost:5432/books_app';
+//const conString = process.env.DATABASE_URL;
 //const CLIENT_URL = process.env.CLIENT_URL;
 const client = new pg.Client(conString);
 // HOW WE CONNECT TO OUR DB
