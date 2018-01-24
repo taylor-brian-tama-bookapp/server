@@ -76,8 +76,8 @@ function createTable() {
   client.query(`
     CREATE TABLE IF NOT EXISTS books(
       book_id SERIAL PRIMARY KEY,
-      title VARCHAR(25),
-      author VARCHAR(256),
+      title VARCHAR(255),
+      author VARCHAR(255),
       isbn VARCHAR(255),
       image_url VARCHAR(255),
       description TEXT NOT NULL
