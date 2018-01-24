@@ -16,7 +16,7 @@ const fs = require('fs');
 
 const conString = process.env.DATABASE_URL;
 //const CLIENT_URL = process.env.CLIENT_URL;
-const CLIENT_URL = 'https://taylor-brian-tama-bookapp.github.io/client';
+const CLIENT_URL = 'http://taylor-brian-tama-bookapp.github.io/client';
 const client = new pg.Client(conString);
 // HOW WE CONNECT TO OUR DB
 client.connect();
