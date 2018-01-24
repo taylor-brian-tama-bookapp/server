@@ -92,6 +92,7 @@ app.listen(PORT, () => {
 
 function loadBooks() {
   app.get('https://taylor-brian-tama-bookapp.github.io/client/data/books.json', function(req, res) {
+    console.log(res);
     JSON.parse(res.toString()).forEach(function(ele) {
       client.query(
         `INSERT INTO books(title, author, isbn, image_url, description) VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING;`,
@@ -100,7 +101,7 @@ function loadBooks() {
     })
   });
  }
- 
+
 function createTable() {
   client.query(`
     CREATE TABLE IF NOT EXISTS books(
