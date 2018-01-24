@@ -66,28 +66,24 @@ app.post('/v1/books', function(req, res) {
     });
 });
     
-
-loadDB();
+createTable();
 
 app.listen(PORT, () => {
     console.log('SERVER started on port:', PORT);
 });
 
-function loadBooks() {
-    fs.readFile(`${CLIENT_URL}/data/books.json`, function(err, fd) {
-      JSON.parse(fd.toString()).forEach(function(ele) {
-        client.query(
-          `INSERT INTO books(title, author, isbn, image_url, description) VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING;`,
-          [ele.title, ele.author, ele.isbn, ele.image_url, ele.description]
-        )
-      })
-    })
-   };
-   
-   function loadDB() {
-    client.query(`
-      CREATE TABLE IF NOT EXISTS
-      books(id SERIAL PRIMARY KEY, title VARCHAR(255), author VARCHAR(255), isbn VARCHAR(255), image_url VARCHAR(255), description TEXT NOT NULL);
-      `)
-      .then(loadBooks());
-   };
+function createTable() {
+  client.query(`
+    CREATE TABLE IF NOT EXISTS books(
+      book_id SERIAL PRIMARY KEY,
+      title VARCHAR(25),
+      author VARCHAR(256),
+      isbn VARCHAR(255),
+      image_url VARCHAR(255),
+      description TEXT NOT NULL
+    );`
+  )
+  .then(function(response) {
+    console.log('created table in db!!!!');
+  });
+};
