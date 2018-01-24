@@ -65,7 +65,18 @@ app.post('/v1/books', function(req, res) {
       console.error(err);
     });
 });
-    
+
+function loadBooks() {
+  fs.readFile(`${CLIENT_URL}/data/books.json`, function(err, fd) {
+    JSON.parse(fd.toString()).forEach(function(ele) {
+      client.query(
+        `INSERT INTO books(title, author, isbn, image_url, description) VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING;`,
+        [ele.title, ele.author, ele.isbn, ele.image_url, ele.description]
+      )
+    })
+  })
+ }  
+
 createTable();
 
 app.listen(PORT, () => {
@@ -83,7 +94,6 @@ function createTable() {
       description TEXT NOT NULL
     );`
   )
-  .then(function(response) {
-    console.log('created table in db!!!!');
-  });
+  .then(loadBooks());
+  
 };
