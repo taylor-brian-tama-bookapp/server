@@ -67,7 +67,7 @@ app.post('/v1/books', function(req, res) {
 });
 
 function loadBooks() {
-  client.query('SELECT COUNT(*) FROM books;')
+  client.query('SELECT COUNT(*) FROM books')
     .then(res => {
       if(!parseInt(res.rows[0].count)) {
         fs.readFile(`${CLIENT_URL}/data/books.json`, (err, fd) => {
