@@ -9,14 +9,12 @@ const pg = require('pg');
 // ALLOWS FOR PARSEING OF INCOMPING API POSTS AND PUTS, MANIPULATES REQ BODY BEFORE IT HITS SERVER
 const bodyParser = require('body-parser');
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 //ALLOWS NODE TO INTERACT WITH LOCAL FILES CUS DB IS RUNNING LOCALLY
 const fs = require('fs');
 
-
 const conString = process.env.DATABASE_URL;
 //const CLIENT_URL = process.env.CLIENT_URL;
-const CLIENT_URL = 'https://taylor-brian-tama-bookapp.github.io/client';
 const client = new pg.Client(conString);
 // HOW WE CONNECT TO OUR DB
 client.connect();
@@ -33,6 +31,7 @@ app.get('/', (req, res) => {
     res.send('hello');
 })
 // ROUTES 
+
 app.get('/v1/books', function(req, res) {
     console.log('app.get /v1/books');
     client.query('SELECT * FROM books;')
@@ -66,41 +65,11 @@ app.post('/v1/books', function(req, res) {
     });
 });
 
-/*function loadBooks() {
-  client.query('SELECT COUNT(*) FROM books')
-    .then(res => {
-      if(!parseInt(res.rows[0].count)) {
-        fs.readFile(`${CLIENT_URL}/data/books.json`, (err, fd) => {
-          JSON.parse(fd.toString().forEach(ele => {
-            client.query(
-              `INSERT INTO books(title, author, isbn, image_url, description) VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING;`,
-              [ele.title, ele.author, ele.isbn, ele.image_url, ele.description]
-            )
-              .catch(console.error);
-          })
-        )
-        })
-      }
-    })
-}*/
-
 createTable();
 
 app.listen(PORT, () => {
     console.log('SERVER started on port:', PORT);
 });
-
-function loadBooks() {
-  app.get('https://taylor-brian-tama-bookapp.github.io/client/data/books.json', function(req, res) {
-    console.log(res);
-    JSON.parse(res.toString()).forEach(function(ele) {
-      client.query(
-        `INSERT INTO books(title, author, isbn, image_url, description) VALUES($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING;`,
-        [ele.title, ele.author, ele.isbn, ele.image_url, ele.description]
-      )
-    })
-  });
- }
 
 function createTable() {
   client.query(`
@@ -113,5 +82,4 @@ function createTable() {
       description TEXT NOT NULL
     );`
   )
-  .then(loadBooks());
 };
