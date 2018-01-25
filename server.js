@@ -43,7 +43,7 @@ app.get('/v1/books', function(req, res) {
     });
   });
 
-app.get(`/v1/books/${ctx.params.book_id}`, function (req,res) {
+app.get('/v1/books', function (req,res) {
   console.log('app.get /v1/books/single');
   client.query('SELECT * FROM books WHERE book_id = req.params.book_id;')
   .then(function(data){
@@ -94,4 +94,4 @@ function createTable() {
       description TEXT NOT NULL
     );`
   )
-};
+};  
