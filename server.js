@@ -12,9 +12,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 //ALLOWS NODE TO INTERACT WITH LOCAL FILES CUS DB IS RUNNING LOCALLY
 
-const conString = 'postgres://localhost:5432/books_app';
-//const conString = process.env.DATABASE_URL;
-//const CLIENT_URL = process.env.CLIENT_URL;
+// const conString = 'postgres://localhost:5432/books_app';
+const conString = process.env.DATABASE_URL;
 const client = new pg.Client(conString);
 // HOW WE CONNECT TO OUR DB
 client.connect();
@@ -43,9 +42,9 @@ app.get('/v1/books', function(req, res) {
     });
   });
 
-app.get(`/v1/books/${ctx.params.book_id}`, function (req,res) {
-  console.log('app.get /v1/books/single');
-  client.query('SELECT * FROM books WHERE book_id = req.params.book_id;')
+app.get('/v1/books/:book_id', function (req,res) {
+  console.log(req);
+  client.query(`SELECT * FROM books WHERE book_id = ${req.params.book_id};`)
   .then(function(data){
     res.send(data.rows);
   })
@@ -94,4 +93,4 @@ function createTable() {
       description TEXT NOT NULL
     );`
   )
-};
+};  
