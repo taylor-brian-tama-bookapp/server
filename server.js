@@ -12,8 +12,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 //ALLOWS NODE TO INTERACT WITH LOCAL FILES CUS DB IS RUNNING LOCALLY
 
-// const conString = 'postgres://localhost:5432/books_app';
-const conString = process.env.DATABASE_URL;
+const conString = 'postgres://localhost:5432/books_app';
+// const conString = process.env.DATABASE_URL;
 const client = new pg.Client(conString);
 // HOW WE CONNECT TO OUR DB
 client.connect();
@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 // ROUTES 
 
 app.get('/v1/books', function(req, res) {
-    console.log('app.get /v1/books');
+    // console.log('app.get /v1/books');
     client.query('SELECT * FROM books;')
     .then(function(data) {
       res.send(data.rows);
@@ -43,7 +43,7 @@ app.get('/v1/books', function(req, res) {
   });
 
 app.get('/v1/books/:book_id', function (req,res) {
-  console.log(req);
+  // console.log(req);
   client.query(`SELECT * FROM books WHERE book_id = ${req.params.book_id};`)
   .then(function(data){
     res.send(data.rows);
@@ -74,6 +74,40 @@ app.post('/v1/books', function(req, res) {
     .catch(function(err) {
       console.error(err);
     });
+});
+
+// DELETE
+app.delete('/v1/books/:book_id', function(req, res) {
+  console.log(req.params.book_id);
+    client.query(`DELETE FROM books WHERE book_id=$1`,
+     [req.params.book_id]
+    )
+    .then(() => res.send('Delete complete'))
+    .catch(console.error);
+});
+
+// UPDATE/PUT
+app.put('/v1/books/:book_id', function(req, res) {
+  console.log(req);
+  client.query(`UPDATE * FROM books WHERE book_id = ${req.params.book_id};`)
+    .then(() => {
+      client.query(`
+      UPDATE books
+      SET title=$1, author=$2, isbn=$3, image_url=$4, description=$5
+      WHERE book_id = $6
+      `,
+      [
+        req.body.title,
+        req.body.author,
+        req.body.isbn,
+        req.body.image_url,
+        req.body.description,
+        req.params.book_id
+      ]
+      )
+    })
+    .then(() => res.send('Update complete'))
+    .catch(console.error);
 });
 
 createTable();
