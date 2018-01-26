@@ -126,5 +126,5 @@ function createTable() {
       image_url VARCHAR(255),
       description TEXT NOT NULL
     );`
-  ) 
+  )      
 };   
