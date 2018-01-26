@@ -127,4 +127,4 @@ function createTable() {
       description TEXT NOT NULL
     );`
   )
-};  
+};   
