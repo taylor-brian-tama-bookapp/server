@@ -87,8 +87,8 @@ app.delete('/v1/books/:book_id', function(req, res) {
 });
 
 // UPDATE/PUT
-app.put('/v1/books/:book_id', function(req, res) {
-  console.log(req);
+app.put('/v1/books/:book_id/edit', function(req, res) {
+  console.log(req.body);
   client.query(`UPDATE * FROM books WHERE book_id = ${req.params.book_id};`)
     .then(() => {
       client.query(`
@@ -126,5 +126,5 @@ function createTable() {
       image_url VARCHAR(255),
       description TEXT NOT NULL
     );`
-  )
+  ) 
 };   
