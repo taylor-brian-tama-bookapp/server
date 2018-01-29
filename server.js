@@ -9,11 +9,11 @@ const pg = require('pg');
 // ALLOWS FOR PARSEING OF INCOMPING API POSTS AND PUTS, MANIPULATES REQ BODY BEFORE IT HITS SERVER
 const bodyParser = require('body-parser');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT //|| 3000;
 //ALLOWS NODE TO INTERACT WITH LOCAL FILES CUS DB IS RUNNING LOCALLY
 
-const conString = 'postgres://localhost:5432/books_app';
-// const conString = process.env.DATABASE_URL;
+// const conString = 'postgres://localhost:5432/books_app';
+const conString = process.env.DATABASE_URL;
 const client = new pg.Client(conString);
 // HOW WE CONNECT TO OUR DB
 client.connect();
